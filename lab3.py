@@ -30,13 +30,13 @@ def rank_filter(pixels: np.ndarray, mask:np.ndarray, rank: int):
     offset = mask.shape[0] // 2
     res = np.zeros_like(pixels)
     expanded = expand(pixels, mask)
+    # получаем список индексов элементов одномерного массива, который мы будем сортировать
+    index = get_indexes(mask)
     for i in range(offset, h + offset):
         for j in range(offset, w + offset):
             frame = expanded[i - offset : i + offset + 1, j - offset : j + offset + 1]
             # делаем из квадратного куска одномерный массив
             ravel = frame.ravel()
-            # получаем список индексов элементов одномерного массива, который мы будем сортировать
-            index = get_indexes(mask)
             # сортируем
             sorted_array = np.sort(ravel[index])
             res[i - offset, j - offset] = sorted_array[rank]
