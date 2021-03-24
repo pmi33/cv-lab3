@@ -81,10 +81,26 @@ def get_indexes(mask: np.ndarray):
         index = np.append(index, np.array([i] * val))
     return index.astype(np.int32)
 
+
+def get_error(source: np.ndarray, filtered: np.ndarray):
+    """
+    Подсчет ошибки фильтрации.
+    Ошибкой будем считать СКО яркости пикселей
+    фильтрованного изображения по отношению
+    к яркости пикселей исходного изображения
+    """
+    diff = np.abs(source.astype(np.float32) - filtered.astype(np.float32))
+    # ищем СКО массива свернутого до одномерного
+    return np.std(diff.ravel())
+
 if __name__ == '__main__':
     img = cv2.imread("img3.jpg", cv2.IMREAD_COLOR)
+    # думаю, что зашумление лучше в коде прописать
+    noise = cv2.imread("noise.jpg", cv2.IMREAD_COLOR)
 
     mask = np.ones((3, 3)).astype(np.int32)
-    filtered = color_rank_filter(img, mask, rank=5)
+    filtered = color_rank_filter(noise, mask, rank=5)
+
+    print("Ошибка:", get_error(img, filtered))
 
     cv2.imwrite("filtered.jpg", filtered)
